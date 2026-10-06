@@ -4,7 +4,7 @@
 # only the public key below is shipped, so a licence can be checked here but not made or changed.
 
 # Written by licensing\New-SigningKey.ps1 - don't edit by hand.
-$LicencePublicKey = '<RSAKeyValue><Modulus>mdlKFui6bLYwdOjaCJbLFVSrem/gV/QmW+QwkCOYgshf1tkGhanELSypy6uhx7GdbyRZ9miq4gsujujTL9Sr3BRG88FQLqZ95ugpIvSPkyMg8x1HvMHmSQH0zWuHZs7KFdl1pR+E2gV51qxJODti6kf8DUtm0L24wKPg4fd6v1nVDuoRtxY8QhJ+3TENHcpOufKhi1b5iQhG4YIP2VRWkTsnM6RdaAfwa+obOlzKUZCyzI793D/zTB8r/Cz1QDV5E80w367TSHM/DnQNY/aiYPB/DqLu/Jz5jodF6vljbdRbGQ15SPBhL+myKhPH3hpQtc/lJSbqrwNS6ApeyTcy5Q==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>'
+$LicencePublicKey = '<RSAKeyValue><Modulus>vKFWxpc8c9JwbvgKcm4WQHYFqpNbMJlDTCRKVs0d/wxnrJe65eOxTV0eY+muyvKLwGxSKBflwpkeW9jsL1TBpjgVOmO4X0hF7Nf7lF2T4SpwiKmZM+6BjiokD2LXx0C4B7AfbBOU2n1/f9ItwAbV+I4qosj8ASdv7GJyMBk3NL7ojKUgZ0S0zFozc7dMQZogIz5G1FgmIFE1T6p+q/W1C69mYIDkVLhBw6UhKxXV1zV6oIJuptiIF9bPQ4waAB56yYJHLNlayc5/HH+DrhPIKAkoRn3PqYHA2NI5XTYJV1YzXb0cvRmujtk+CkE9vpIlBNNMkz9yHMVI/TFykjZxqQ==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>'
 # Shown to the customer when the licence needs renewing, e.g. "renewals@yourcompany.com".
 $LicenceContact = ''
 
