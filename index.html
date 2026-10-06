@@ -102,7 +102,7 @@
 
 <h2 id="quick-start">1. Quick start</h2>
 <ol>
-  <li>Copy the whole folder to the PC (the <code>.bat</code> files and the <code>lib</code> folder must stay together).</li>
+  <li>Copy the whole folder to the PC (the <code>.bat</code> files and the <code>lib</code> folder must stay together), and save your <strong><code>licence.key</code></strong> in it, next to <code>Main.bat</code>.</li>
   <li>Double-click <strong><code>Install Dependencies.bat</code></strong> and choose <strong>1</strong>. When Windows asks <em>"Do you want to allow this app to make changes"</em>, click <strong>Yes</strong> (needed for SQL Server Express only).</li>
   <li>Double-click <strong><code>Edit Connections.bat</code></strong>, press <strong>A</strong> and add your databases (see below).</li>
   <li>Double-click <strong><code>Main.bat</code></strong> and pick a tool (or double-click the tool's own <code>.bat</code>). Every tool first asks <strong>1. SQL Server / 2. PostgreSQL</strong> and then lists your connections of that type.</li>
@@ -234,6 +234,7 @@ Hotel_db = dump</code></pre>
     <tr><td><em>"A database named ... already exists on localhost\SQLEXPRESS"</em> during a <code>.bak</code> backup</td><td>A copy left from an interrupted run. Delete that database on the local server, then retry.</td></tr>
     <tr><td>SQL Server setup fails with <em>path exceeds 260 characters</em></td><td>The installer already unpacks to <code>%USERPROFILE%\sqlsetup</code>; make sure your user name/path isn't unusually long.</td></tr>
     <tr><td>PostgreSQL restore shows <em>(ignored) must be owner of extension</em></td><td>Normal on hosted PostgreSQL - you aren't the server administrator. Real errors stop the restore and are shown.</td></tr>
+    <tr><td><em>"LICENCE: No licence found"</em> / <em>"not valid"</em> / <em>"the licence ended"</em></td><td>The tools need a yearly <code>licence.key</code> in the main folder (next to <code>Main.bat</code>). From 30 days before it ends they show a reminder, and they keep working for 14 days after it ends. To renew, save the new <code>licence.key</code> you receive over the old one. Don't edit the file: any change makes it invalid.</td></tr>
     <tr><td>Auto Backup didn't run</td><td>Check <code>Backups\auto-backup.log</code>, and that you were signed in to Windows. The <code>Auto Backup.bat</code> menu shows the next and last run.</td></tr>
   </tbody>
 </table></div>
@@ -244,10 +245,12 @@ Hotel_db = dump</code></pre>
   <thead><tr><th>File</th><th>Purpose</th></tr></thead>
   <tbody>
     <tr><td><code>Main.bat</code>, <code>*.bat</code> (main folder)</td><td>The double-click launchers listed at the top</td></tr>
+    <tr><td><code>licence.key</code> (main folder)</td><td>Your yearly licence, checked by every tool except Install Dependencies</td></tr>
     <tr><td><code>conn\connections.txt</code></td><td>Settings and connection strings (contains passwords)</td></tr>
     <tr><td><code>conn\connections.sample.txt</code></td><td>Clean sample of <code>connections.txt</code> (no passwords), used to rebuild it</td></tr>
     <tr><td><code>conn\history\</code></td><td>Earlier versions of <code>connections.txt</code>, kept by Edit Connections (contain passwords)</td></tr>
     <tr><td><code>Common.ps1</code>, <code>PgTools.ps1</code></td><td>Shared code for SQL Server and PostgreSQL</td></tr>
+    <tr><td><code>Licence.ps1</code></td><td>The licence check</td></tr>
     <tr><td><code>Backup-Launcher.ps1</code>, <code>Auto-Backup.ps1</code>, <code>Restore-Launcher.ps1</code>, <code>Compare-Sync.ps1</code>, <code>Copy-AcrossEngines.ps1</code>, <code>Edit-Connections.ps1</code>, <code>Install-Dependencies.ps1</code></td><td>The tools behind the <code>.bat</code> files</td></tr>
     <tr><td><code>Backup-FromConnectionString.ps1</code></td><td><code>.bak</code> of a database on a server where the login may back up (e.g. the local server)</td></tr>
     <tr><td><code>Backup-RemoteDatabase.ps1</code></td><td><code>.bak</code> of a hosted SQL Server database (export → local import → backup)</td></tr>

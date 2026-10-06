@@ -3,3 +3,6 @@ conn/*
 !conn/connections.sample.txt
 Backups/*
 connections-history/*
+
+# The customer's yearly licence - each customer gets their own.
+licence.key

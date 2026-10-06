@@ -17,7 +17,7 @@ Double-click tools for backing up, restoring, comparing, syncing and copying **S
 
 ## 1. Quick start
 
-1. Copy the whole folder to the PC (the `.bat` files and the `lib` folder must stay together).
+1. Copy the whole folder to the PC (the `.bat` files and the `lib` folder must stay together), and save your **`licence.key`** in it, next to `Main.bat`.
 2. Double-click **`Install Dependencies.bat`** and choose **1**. When Windows asks *"Do you want to allow this app to make changes"*, click **Yes** (needed for SQL Server Express only).
 3. Double-click **`Edit Connections.bat`**, press **A** and add your databases (see below).
 4. Double-click **`Main.bat`** and pick a tool (or double-click the tool's own `.bat`). Every tool first asks **1. SQL Server / 2. PostgreSQL** and then lists your connections of that type.
@@ -151,6 +151,7 @@ Not copied: views, procedures, functions and triggers (T-SQL and PL/pgSQL are di
 | *"A database named ... already exists on localhost\SQLEXPRESS"* during a `.bak` backup | A copy left from an interrupted run. Delete that database on the local server, then retry. |
 | SQL Server setup fails with *path exceeds 260 characters* | The installer already unpacks to `%USERPROFILE%\sqlsetup`; make sure your user name/path isn't unusually long. |
 | PostgreSQL restore shows *(ignored) must be owner of extension* | Normal on hosted PostgreSQL - you aren't the server administrator. Real errors stop the restore and are shown. |
+| *"LICENCE: No licence found"* / *"not valid"* / *"the licence ended"* | The tools need a yearly `licence.key` in the main folder (next to `Main.bat`). From 30 days before it ends they show a reminder, and they keep working for 14 days after it ends. To renew, save the new `licence.key` you receive over the old one. Don't edit the file: any change makes it invalid. |
 | Auto Backup didn't run | Check `Backups\auto-backup.log`, and that you were signed in to Windows. The `Auto Backup.bat` menu shows the next and last run. |
 
 ---
@@ -162,10 +163,12 @@ The main folder holds the `.bat` launchers, `README.md`, `index.html`, the `Back
 | File | Purpose |
 |---|---|
 | `Main.bat`, `*.bat` (main folder) | The double-click launchers listed at the top |
+| `licence.key` (main folder) | Your yearly licence, checked by every tool except Install Dependencies |
 | `conn\connections.txt` | Settings and connection strings (contains passwords) |
 | `conn\connections.sample.txt` | Clean sample of `connections.txt` (no passwords), used to rebuild it |
 | `conn\history\` | Earlier versions of `connections.txt`, kept by Edit Connections (contain passwords) |
 | `Common.ps1`, `PgTools.ps1` | Shared code for SQL Server and PostgreSQL |
+| `Licence.ps1` | The licence check |
 | `Backup-Launcher.ps1`, `Auto-Backup.ps1`, `Restore-Launcher.ps1`, `Compare-Sync.ps1`, `Copy-AcrossEngines.ps1`, `Edit-Connections.ps1`, `Install-Dependencies.ps1` | The tools behind the `.bat` files |
 | `Backup-FromConnectionString.ps1` | `.bak` of a database on a server where the login may back up (e.g. the local server) |
 | `Backup-RemoteDatabase.ps1` | `.bak` of a hosted SQL Server database (export -> local import -> backup) |

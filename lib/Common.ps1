@@ -2,6 +2,9 @@
 # Dot-sourced by Backup-Launcher.ps1 and Compare-Sync.ps1 - not meant to be run on its own.
 
 $ToolDir = $PSScriptRoot
+# Every tool needs a valid yearly licence (..\licence.key). $Unattended is set by Auto-Backup.ps1 for scheduled runs.
+. (Join-Path $ToolDir "Licence.ps1")
+Assert-Licence ([IO.Path]::GetFullPath((Join-Path $ToolDir "..\licence.key"))) -NoPause:([bool]$Unattended)
 # Connections and settings live in ..\conn (kept out of git - only connections.sample.txt is committed).
 $ConnDir = [IO.Path]::GetFullPath((Join-Path $ToolDir "..\conn"))
 if (-not (Test-Path -LiteralPath $ConnDir)) { [void](New-Item -ItemType Directory -Path $ConnDir -Force) }
