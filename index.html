@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Database Tools</title>
+<style>
+  :root {
+    --bg: #f7f7f5; --surface: #ffffff; --text: #1d1d1b; --muted: #5f5f5a;
+    --border: #e2e1dc; --accent: #2b6cb0; --accent-soft: #e8f0fa;
+    --code-bg: #f0efeb; --warn-bg: #fff6e0; --warn-border: #e9c46a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161615; --surface: #1f1f1d; --text: #ecebe6; --muted: #a3a29c;
+      --border: #34332f; --accent: #7fb2eb; --accent-soft: #1d2a3a;
+      --code-bg: #2a2a27; --warn-bg: #2e2716; --warn-border: #8a6d22;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.6 "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+  .layout { display: grid; grid-template-columns: 230px minmax(0, 1fr); max-width: 1180px; margin: 0 auto; }
+  nav {
+    position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
+    padding: 32px 20px; border-right: 1px solid var(--border);
+  }
+  nav .brand { font-weight: 700; font-size: 1.05rem; margin-bottom: 20px; }
+  nav a { display: block; color: var(--muted); text-decoration: none; padding: 5px 10px; border-radius: 6px; font-size: .93rem; }
+  nav a:hover { background: var(--accent-soft); color: var(--accent); }
+  nav a.sub { padding-left: 24px; font-size: .87rem; }
+  main { padding: 40px 48px 80px; min-width: 0; }
+  h1 { font-size: 2.1rem; margin: 0 0 8px; letter-spacing: -.01em; }
+  h2 { font-size: 1.45rem; margin: 56px 0 14px; padding-top: 8px; border-top: 1px solid var(--border); }
+  h3 { font-size: 1.12rem; margin: 32px 0 8px; }
+  h2, h3 { scroll-margin-top: 16px; }
+  .lead { color: var(--muted); font-size: 1.05rem; max-width: 62ch; }
+  a { color: var(--accent); }
+  code {
+    font-family: Consolas, "Cascadia Mono", monospace; font-size: .88em;
+    background: var(--code-bg); padding: 1px 5px; border-radius: 4px;
+  }
+  pre {
+    background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px 16px; overflow-x: auto; font-size: .86rem; line-height: 1.5;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  .table-wrap { overflow-x: auto; margin: 14px 0; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: .93rem; }
+  th, td { text-align: left; vertical-align: top; padding: 9px 12px; border-bottom: 1px solid var(--border); }
+  th { background: var(--code-bg); font-weight: 600; }
+  tr:last-child td { border-bottom: none; }
+  .tools { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin: 24px 0; }
+  .tool { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+  .tool code { font-weight: 600; background: var(--accent-soft); color: var(--accent); }
+  .tool p { margin: 8px 0 0; color: var(--muted); font-size: .92rem; }
+  .callout { background: var(--warn-bg); border-left: 4px solid var(--warn-border); padding: 10px 14px; border-radius: 6px; margin: 14px 0; }
+  ol, ul { padding-left: 1.4em; }
+  li { margin: 4px 0; }
+  @media (max-width: 820px) {
+    .layout { display: block; }
+    nav { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); padding: 16px; }
+    nav a.sub { display: none; }
+    main { padding: 24px 16px 60px; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+<nav>
+  <div class="brand">Database Tools</div>
+  <a href="#quick-start">1. Quick start</a>
+  <a href="#dependencies">2. Dependencies</a>
+  <a href="#connections">3. connections.txt</a>
+  <a href="#tools">4. The tools</a>
+  <a class="sub" href="#backup">Backup Database</a>
+  <a class="sub" href="#auto-backup">Auto Backup</a>
+  <a class="sub" href="#restore">Restore Database</a>
+  <a class="sub" href="#compare">Compare and Sync</a>
+  <a class="sub" href="#copy">Copy Across Engines</a>
+  <a href="#troubleshooting">5. Troubleshooting</a>
+  <a href="#files">6. Files</a>
+</nav>
+
+<main>
+<h1>Database Tools</h1>
+<p class="lead">Double-click tools for backing up, restoring, comparing, syncing and copying <strong>SQL Server</strong> and <strong>PostgreSQL</strong> databases, including hosted ones such as site4now. Everything runs on this PC with Windows PowerShell; there is nothing to install on the database servers.</p>
+
+<div class="tools">
+  <div class="tool"><code>Main.bat</code><p>Menu that opens any of the tools below</p></div>
+  <div class="tool"><code>Install Dependencies.bat</code><p>Installs everything the tools need (run this first on a new PC)</p></div>
+  <div class="tool"><code>Edit Connections.bat</code><p>Add, change, test or remove connections, automatic backups and settings</p></div>
+  <div class="tool"><code>Backup Database.bat</code><p>Back up one, several or all databases to <code>.bak</code> / <code>.dump</code> / <code>.sql</code></p></div>
+  <div class="tool"><code>Auto Backup.bat</code><p>Run the backups listed in <code>connections.txt</code> automatically, on a schedule</p></div>
+  <div class="tool"><code>Restore Database.bat</code><p>Restore a backup into a database, or convert between backup formats</p></div>
+  <div class="tool"><code>Compare and Sync.bat</code><p>Compare two databases row by row and sync them</p></div>
+  <div class="tool"><code>Copy Across Engines.bat</code><p>Copy a database from SQL Server to PostgreSQL or the other way round</p></div>
+</div>
+
+<h2 id="quick-start">1. Quick start</h2>
+<ol>
+  <li>Copy the whole folder to the PC (the <code>.bat</code> files and the <code>lib</code> folder must stay together).</li>
+  <li>Double-click <strong><code>Install Dependencies.bat</code></strong> and choose <strong>1</strong>. When Windows asks <em>"Do you want to allow this app to make changes"</em>, click <strong>Yes</strong> (needed for SQL Server Express only).</li>
+  <li>Double-click <strong><code>Edit Connections.bat</code></strong>, press <strong>A</strong> and add your databases (see below).</li>
+  <li>Double-click <strong><code>Main.bat</code></strong> and pick a tool (or double-click the tool's own <code>.bat</code>). Every tool first asks <strong>1. SQL Server / 2. PostgreSQL</strong> and then lists your connections of that type.</li>
+</ol>
+<p>Nothing is changed in a database until you confirm, and changing operations offer a backup first and ask you to type <strong>YES</strong> (or the database name).</p>
+
+<h2 id="dependencies">2. Dependencies</h2>
+<p><code>Install Dependencies.bat</code> downloads and installs these for you, and skips anything already installed. To install by hand, use the links:</p>
+<div class="table-wrap"><table>
+  <thead><tr><th>Dependency</th><th>Needed for</th><th>Download</th><th>Installed to</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Windows 10/11 + Windows PowerShell 5.1</strong></td><td>everything</td><td>built into Windows</td><td>-</td></tr>
+    <tr><td><strong>SQL Server 2022 Express</strong> (free)</td><td><code>.bak</code> backups of hosted SQL Server databases, restoring <code>.bak</code> files, converting <code>.sql</code> → <code>.bak</code>, restoring to "this PC"</td><td><a href="https://www.microsoft.com/en-us/sql-server/sql-server-downloads">SQL Server downloads</a> - offline package used by the installer: <a href="https://download.microsoft.com/download/3/8/d/38de7036-2433-4207-8eae-06e247e17b25/SQLEXPR_x64_ENU.exe">SQLEXPR_x64_ENU.exe</a></td><td>instance <code>localhost\SQLEXPRESS</code></td></tr>
+    <tr><td><strong>SqlPackage</strong> (Microsoft)</td><td><code>.bak</code> backups of hosted SQL Server databases (via <code>.bacpac</code>), <code>.bacpac</code> files</td><td><a href="https://learn.microsoft.com/en-us/sql/tools/sqlpackage/sqlpackage-download">SqlPackage download page</a> - <a href="https://aka.ms/sqlpackage-windows">direct zip</a></td><td><code>%USERPROFILE%\sqlpackage</code></td></tr>
+    <tr><td><strong>PostgreSQL 18 tools</strong> (<code>psql</code>, <code>pg_dump</code>, <code>pg_restore</code>, private local server)</td><td>all PostgreSQL features</td><td><a href="https://www.enterprisedb.com/download-postgresql-binaries">EnterpriseDB binaries</a> - <a href="https://get.enterprisedb.com/postgresql/postgresql-18.3-1-windows-x64-binaries.zip">direct zip (18.3)</a></td><td><code>%USERPROFILE%\pgsql</code></td></tr>
+    <tr><td><strong>Node.js LTS</strong> (optional)</td><td>only for <code>.prisma</code> schema files in Compare and Sync</td><td><a href="https://nodejs.org/">nodejs.org</a></td><td>standard install</td></tr>
+  </tbody>
+</table></div>
+<p>Optional graphical tools for looking inside databases (not needed by the tools):
+<a href="https://learn.microsoft.com/en-us/ssms/install/install">SQL Server Management Studio</a> and <a href="https://www.pgadmin.org/download/">pgAdmin</a>.</p>
+<p><strong>Notes</strong></p>
+<ul>
+  <li>The SQL Server installer is checked to be signed by Microsoft and to be version 2022 before it runs. (The current "Express" download on Microsoft's site is SQL Server <strong>2025</strong>; its <code>.bak</code> files can't be restored on SQL Server 2022 servers such as site4now, so 2022 is used on purpose.)</li>
+  <li>EnterpriseDB's PostgreSQL files are not code-signed; they are downloaded over HTTPS from enterprisedb.com.</li>
+  <li>SQL Server Express databases can be at most 10 GB each.</li>
+</ul>
+
+<h2 id="connections">3. <code>conn\connections.txt</code></h2>
+<p>One settings file for all tools.</p>
+<div class="callout"><strong>It contains passwords - don't share or email it.</strong></div>
+<p>Change it with <strong><code>Edit Connections.bat</code></strong> instead of editing the file by hand:</p>
+<div class="table-wrap"><table>
+  <thead><tr><th>Key</th><th>What it does</th></tr></thead>
+  <tbody>
+    <tr><td>a number</td><td>Change, rename, test or remove that connection, set its automatic backup, or show the full connection string</td></tr>
+    <tr><td><strong>A</strong></td><td>Add a connection: paste a connection string, or type server / database / login and the string is built for you. You can test it before it's saved.</td></tr>
+    <tr><td><strong>T</strong></td><td>Test all connections</td></tr>
+    <tr><td><strong>B</strong></td><td>Automatic backups: which databases <code>Auto Backup.bat</code> backs up, and in which format</td></tr>
+    <tr><td><strong>S</strong></td><td>Settings: backup folder, schema file, local server, how many backups to keep</td></tr>
+    <tr><td><strong>K</strong></td><td>Check the file for mistakes (bad connection strings, auto backups for names that don't exist, ...)</td></tr>
+    <tr><td><strong>U</strong></td><td>Undo: put back an earlier version. Every save keeps the previous file in <code>conn\history</code> (newest 20).</td></tr>
+    <tr><td><strong>D</strong></td><td>Start again from the sample file: either rebuild the file but keep your entries (fixes a damaged file), or start fresh</td></tr>
+    <tr><td><strong>N</strong></td><td>Open the file in Notepad (it's checked for mistakes after you close Notepad)</td></tr>
+  </tbody>
+</table></div>
+<p><code>conn\connections.sample.txt</code> is a clean copy with examples and no passwords. The tools never change it. If <code>connections.txt</code> is deleted, the next tool you open makes a new one from the sample.</p>
+<p>The file itself looks like this (lines starting with <code>#</code> are comments, and they're kept when the editor saves):</p>
+<pre><code>outputFolder   = ..\Backups         # where backups and reports go (one sub-folder per connection)
+schemaFile     =                    # optional .sql or .prisma file used by Compare and Sync
+localServer    = localhost\SQLEXPRESS
+autoBackupKeep = 7                  # Auto Backup keeps this many backups per database and format (0 = all)
+
+[connections]
+# name = connection string  - the type is recognised automatically
+cocacola = Data Source=server;Initial Catalog=MyDb;User Id=user;Password=...;Encrypt=True;TrustServerCertificate=True;
+Hotel_db = Host=server;Port=5432;Database=mydb;Username=user;Password=...
+
+[autobackup]
+# connection name = format(s) for Auto Backup.bat
+cocacola = sql
+Hotel_db = dump</code></pre>
+<ul>
+  <li><strong>SQL Server</strong> strings use <code>Data Source=...;Initial Catalog=...</code> (the usual .NET format).</li>
+  <li><strong>PostgreSQL</strong> strings use <code>Host=...;Port=...;Database=...;Username=...;Password=...</code> (Npgsql format) or <code>postgresql://user:password@host:port/db</code>.</li>
+  <li>In any list you can also press <strong>P</strong> to paste a connection string that isn't in the file, or <strong>E</strong> to open the connection editor.</li>
+</ul>
+
+<h2 id="tools">4. The tools</h2>
+
+<h3 id="backup">Backup Database.bat</h3>
+<p>Pick the database type, then one database (<code>1</code>), several (<code>1,3</code>) or all (<code>A</code>), then the format:</p>
+<div class="table-wrap"><table>
+  <thead><tr><th></th><th>Format</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>SQL Server</td><td><strong>.bak</strong></td><td>Native backup. Restores on SQL Server <strong>2022 or newer</strong> only. For hosted databases it's made through SqlPackage + the local SQL Server Express.</td></tr>
+    <tr><td>SQL Server</td><td><strong>.sql</strong></td><td>Script with structure + all data. Works with <strong>read-only logins</strong> and restores on <strong>SQL Server 2014+</strong>.</td></tr>
+    <tr><td>PostgreSQL</td><td><strong>.dump</strong></td><td><code>pg_dump</code> custom format (PostgreSQL's equivalent of <code>.bak</code>).</td></tr>
+    <tr><td>PostgreSQL</td><td><strong>.sql</strong></td><td>Plain <code>pg_dump</code> script.</td></tr>
+  </tbody>
+</table></div>
+<p>Each backup is checked after it's made and also zipped. Files go to <code>Backups\&lt;connection name&gt;\&lt;database&gt;_&lt;date&gt;_&lt;time&gt;.&lt;ext&gt;</code>. Afterwards you can delete older backups of the same database (all, or keep the newest few).</p>
+
+<h3 id="auto-backup">Auto Backup.bat</h3>
+<p>Backs up the databases listed under <code>[autobackup]</code> in <code>connections.txt</code>, in the format given there (<code>bak</code>, <code>dump</code>, <code>sql</code> or <code>both</code>).</p>
+<ul>
+  <li><strong>1</strong> runs them now, <strong>2</strong> schedules them (every day, once a week, or every few hours) in Windows Task Scheduler as task <em>"Database Auto Backup"</em>, <strong>3</strong> removes the schedule (this stops the automatic backups), <strong>4</strong> changes which databases are backed up, <strong>5</strong> opens the log.</li>
+  <li>Old backups beyond <code>autoBackupKeep</code> are deleted automatically, per database and format.</li>
+  <li>Every run is written to <code>Backups\auto-backup.log</code>.</li>
+  <li>The schedule runs while you're signed in to Windows; if the PC was off at the scheduled time, it runs as soon as it's back on.</li>
+</ul>
+
+<h3 id="restore">Restore Database.bat</h3>
+<ol>
+  <li><strong>Restore a backup</strong> - pick a file from the recent list, browse, or paste a path (<code>.zip</code> files are unpacked automatically), then restore it into:
+    <ul>
+      <li><strong>a database on this PC</strong> (SQL Server Express, or the private PostgreSQL server on port 54329), new or replacing one; or</li>
+      <li><strong>a database from <code>connections.txt</code></strong> - it offers a backup first, asks you to type the database name, deletes everything in it, then restores. A <code>.bak</code> can be restored into any SQL Server (including 2014 and hosted ones) because it's converted to a script first.</li>
+    </ul>
+  </li>
+  <li><strong>Convert</strong> - SQL Server: <code>.sql</code> or <code>.bacpac</code> → <code>.bak</code>. PostgreSQL: <code>.dump</code> ↔ <code>.sql</code>.</li>
+</ol>
+
+<h3 id="compare">Compare and Sync.bat</h3>
+<p>Pick database A and B (same type). It compares every table, column and row, shows the differences and saves a report in <code>Backups\Compare-Reports</code>. Then choose:</p>
+<ol>
+  <li><strong>Add missing rows</strong> - into A, B or both (nothing is changed or deleted)</li>
+  <li><strong>Delete extra rows</strong> - from A or B</li>
+  <li><strong>Copy A to B</strong></li>
+  <li><strong>Copy B to A</strong> - make one an exact copy of the other</li>
+</ol>
+<p>Tables or columns missing on the side being changed are built from the other database, or from <code>schemaFile</code> (<code>.sql</code>, or <code>.prisma</code> with <code>provider = "sqlserver"</code> / <code>"postgresql"</code>). All row changes are made in one transaction and checked again afterwards.</p>
+
+<h3 id="copy">Copy Across Engines.bat</h3>
+<p>Copies between SQL Server and PostgreSQL (either direction):</p>
+<ol>
+  <li><strong>Create the tables and copy the data</strong> - types, primary keys, indexes, foreign keys, auto-numbering and common defaults (<code>getdate()</code> ↔ <code>now()</code>, <code>newid()</code> ↔ <code>gen_random_uuid()</code>) are translated.</li>
+  <li><strong>Copy into tables that already exist</strong> (e.g. created by your app or EF migrations) - tables and columns are matched ignoring upper/lower case and <code>_</code> (<code>SaleItems</code> = <code>sale_items</code>). Choose <strong>replace the data</strong> or <strong>only add missing rows</strong>.</li>
+</ol>
+<p>The plan lists everything that had to be approximated and is saved to <code>Backups\Copy-Reports</code>. The copy runs in one transaction and every row is compared on both sides afterwards.</p>
+<p>Not copied: views, procedures, functions and triggers (T-SQL and PL/pgSQL are different languages - they are listed so you can recreate them).</p>
+
+<h2 id="troubleshooting">5. Troubleshooting</h2>
+<div class="table-wrap"><table>
+  <thead><tr><th>Problem</th><th>Fix</th></tr></thead>
+  <tbody>
+    <tr><td><em>"running scripts is disabled on this system"</em></td><td>Start the tools with the <code>.bat</code> files, or run <code>powershell -ExecutionPolicy Bypass -File lib\&lt;script&gt;.ps1</code>.</td></tr>
+    <tr><td>A <code>.bak</code> backup of a hosted SQL Server fails with <em>VIEW DEFINITION</em> / permission errors</td><td>The login can't read the database structure. Use the <strong>.sql</strong> format, or ask the host to grant <code>VIEW DEFINITION</code>.</td></tr>
+    <tr><td><em>"backup comes from a newer SQL Server"</em></td><td><code>.bak</code> files only restore on the same or newer version. Use a <code>.sql</code> backup instead.</td></tr>
+    <tr><td><em>"A database named ... already exists on localhost\SQLEXPRESS"</em> during a <code>.bak</code> backup</td><td>A copy left from an interrupted run. Delete that database on the local server, then retry.</td></tr>
+    <tr><td>SQL Server setup fails with <em>path exceeds 260 characters</em></td><td>The installer already unpacks to <code>%USERPROFILE%\sqlsetup</code>; make sure your user name/path isn't unusually long.</td></tr>
+    <tr><td>PostgreSQL restore shows <em>(ignored) must be owner of extension</em></td><td>Normal on hosted PostgreSQL - you aren't the server administrator. Real errors stop the restore and are shown.</td></tr>
+    <tr><td>Auto Backup didn't run</td><td>Check <code>Backups\auto-backup.log</code>, and that you were signed in to Windows. The <code>Auto Backup.bat</code> menu shows the next and last run.</td></tr>
+  </tbody>
+</table></div>
+
+<h2 id="files">6. Files</h2>
+<p>The main folder holds the <code>.bat</code> launchers, <code>README.md</code>, <code>index.html</code>, the <code>Backups\</code> folder and the <code>conn\</code> folder. <code>conn\</code> holds your connections and is kept out of git (see <code>.gitignore</code>); only <code>connections.sample.txt</code> is committed. Everything else is in <code>lib\</code>:</p>
+<div class="table-wrap"><table>
+  <thead><tr><th>File</th><th>Purpose</th></tr></thead>
+  <tbody>
+    <tr><td><code>Main.bat</code>, <code>*.bat</code> (main folder)</td><td>The double-click launchers listed at the top</td></tr>
+    <tr><td><code>conn\connections.txt</code></td><td>Settings and connection strings (contains passwords)</td></tr>
+    <tr><td><code>conn\connections.sample.txt</code></td><td>Clean sample of <code>connections.txt</code> (no passwords), used to rebuild it</td></tr>
+    <tr><td><code>conn\history\</code></td><td>Earlier versions of <code>connections.txt</code>, kept by Edit Connections (contain passwords)</td></tr>
+    <tr><td><code>Common.ps1</code>, <code>PgTools.ps1</code></td><td>Shared code for SQL Server and PostgreSQL</td></tr>
+    <tr><td><code>Backup-Launcher.ps1</code>, <code>Auto-Backup.ps1</code>, <code>Restore-Launcher.ps1</code>, <code>Compare-Sync.ps1</code>, <code>Copy-AcrossEngines.ps1</code>, <code>Edit-Connections.ps1</code>, <code>Install-Dependencies.ps1</code></td><td>The tools behind the <code>.bat</code> files</td></tr>
+    <tr><td><code>Backup-FromConnectionString.ps1</code></td><td><code>.bak</code> of a database on a server where the login may back up (e.g. the local server)</td></tr>
+    <tr><td><code>Backup-RemoteDatabase.ps1</code></td><td><code>.bak</code> of a hosted SQL Server database (export → local import → backup)</td></tr>
+    <tr><td><code>Export-SqlDump.ps1</code> / <code>Import-SqlDump.ps1</code></td><td>Write / run a SQL Server <code>.sql</code> dump</td></tr>
+    <tr><td><code>Backups\</code> (main folder)</td><td>Backups (one folder per connection), <code>Compare-Reports\</code>, <code>Copy-Reports\</code>, <code>auto-backup.log</code></td></tr>
+  </tbody>
+</table></div>
+<p>The scripts can also be run directly from PowerShell, e.g.:</p>
+<pre><code>powershell -ExecutionPolicy Bypass -File .\lib\Export-SqlDump.ps1 -ConnectionString "Data Source=...;Initial Catalog=...;..." -OutputDir D:\Backups -Zip
+powershell -ExecutionPolicy Bypass -File .\lib\Auto-Backup.ps1 -Unattended</code></pre>
+</main>
+</div>
+</body>
+</html>

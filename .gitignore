@@ -1,0 +1,5 @@
+# Connections and settings contain passwords - only the sample is committed.
+conn/*
+!conn/connections.sample.txt
+Backups/*
+connections-history/*

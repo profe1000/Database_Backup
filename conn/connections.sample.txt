@@ -1,0 +1,41 @@
+# =====================================================================
+#  Settings for all the database tools (see README.md)
+#  Change them with "Edit Connections.bat" (or Notepad). Lines starting with # are comments.
+#  WARNING: this file contains passwords - don't share or email it.
+#
+#  This is the SAMPLE file. It is never changed by the tools. If connections.txt is
+#  deleted or damaged, "Edit Connections.bat" (option D) rebuilds it from this file.
+# =====================================================================
+
+# Where backups go (one sub-folder per connection) and compare reports.
+# A relative path is relative to this conn folder; ..\Backups = the Backups folder next to the .bat files.
+outputFolder = ..\Backups
+
+# Optional: schema file used to build missing tables/columns during a sync.
+#   .sql    - CREATE TABLE script (e.g. from "dotnet ef migrations script" or SSMS)
+#   .prisma - Prisma schema (needs Node.js installed)
+# Leave empty if you don't have one; the other database is used as the model instead.
+schemaFile =
+
+# Local SQL Server used to turn remote databases into .bak files.
+localServer = localhost\SQLEXPRESS
+
+# Auto Backup.bat: how many backups to keep per database and format (older ones are deleted). 0 = keep all.
+autoBackupKeep = 7
+
+[connections]
+# name = connection string        (one per line; the name can't contain "=")
+# SQL Server:  Data Source=...;Initial Catalog=...;User Id=...;Password=...
+# PostgreSQL:  Host=...;Port=...;Database=...;Username=...;Password=...   (recognised automatically)
+#
+# Examples (remove the # to use one):
+# my-sqlserver = Data Source=sql1234.site4now.net;Initial Catalog=db_example;User Id=db_example_admin;Password=CHANGE-ME;Encrypt=True;TrustServerCertificate=True;
+# my-local     = Data Source=localhost\SQLEXPRESS;Initial Catalog=MyDb;Integrated Security=True;TrustServerCertificate=True;
+# my-postgres  = Host=pg1001.site4now.net;Port=6432;Database=db_example;Username=example_user;Password=CHANGE-ME
+
+[autobackup]
+# Databases that "Auto Backup.bat" backs up:   connection name = format
+#   SQL Server:  bak  |  sql  |  both          PostgreSQL:  dump  |  sql  |  both
+#   ("sql" works with read-only logins; a .bak of a hosted SQL Server database needs SQL Server Express on this PC)
+# Example:
+# my-sqlserver = sql
